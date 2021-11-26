@@ -9,6 +9,6 @@ import com.miykah.mp.pojo.User;
  */
 public interface UserMapper extends BaseMapper<User> {
 
-
+    User findById(Long id);
 
 }

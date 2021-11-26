@@ -11,6 +11,7 @@
     <modules>
         <module>Mybatis_plus_demo1</module>
         <module>Mybatis_plus_demo2</module>
+        <module>Mybatis_Spring</module>
     </modules>
 
     <properties>

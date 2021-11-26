@@ -1,7 +1,10 @@
 package com.miykah.mp;
 
+import com.baomidou.mybatisplus.core.conditions.query.Query;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.miykah.mp.mapper.UserMapper;
 import com.miykah.mp.pojo.User;
 import org.junit.Test;
@@ -10,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -91,12 +95,12 @@ public class TestMybatisSpring {
     public void testUpdate3(){
         User user = new User();
         user.setPassword("asdasd");
-        user.setMail("qwe@qq.com");
+        user.setEmail("qwe@qq.com");
 
         QueryWrapper<User> wrapper = new QueryWrapper<>();
         wrapper.eq("user_name","zhaoliu");
 
-        int count = userMapper.update(user, wrapper);
+        int count = userMapper.update(user,wrapper);
         System.out.println("有" + count + "条数据被更新");
     }
 
@@ -125,4 +129,132 @@ public class TestMybatisSpring {
         System.out.println("有" + count + "条数据被删除");
     }
 
+    @Test
+    public void testDelete(){
+        QueryWrapper<User> wrapper = new QueryWrapper<>();
+        wrapper.eq("user_name","lisi");
+        wrapper.eq("password","135246");
+        int count = userMapper.delete(wrapper);
+        System.out.println("有" + count + "条数据被删除");
+    }
+
+    @Test
+    public void testDelete2(){
+        User user = new User();
+        user.setPassword("000");
+        user.setUserName("lalala");
+        QueryWrapper<User> wrapper = new QueryWrapper<>(user);
+
+        int count = userMapper.delete(wrapper);
+        System.out.println("有" + count + "条数据被删除");
+    }
+
+    @Test
+    public void testDeleteBatchIds(){
+        int count = userMapper.deleteBatchIds(Arrays.asList(10L,11L));
+        System.out.println("有" + count + "条数据被删除");
+    }
+
+    @Test
+    public void testSelectBatchIds(){
+        List<User> users = userMapper.selectBatchIds(Arrays.asList(5L, 6l, 7l, 100l));
+        for (User user : users) {
+            System.out.println(user);
+        }
+    }
+
+    @Test
+    public void testSelectOne(){
+        QueryWrapper<User> wrapper = new QueryWrapper<>();
+        wrapper.eq("user_name","miykah");
+        User user = userMapper.selectOne(wrapper);
+        System.out.println(user);
+    }
+
+    @Test
+    public void testSelectCount(){
+        QueryWrapper<User> wrapper = new QueryWrapper<>();
+        wrapper.gt("age",21);  //gt:大于 查询age大于21的数据
+        Integer count = userMapper.selectCount(wrapper);
+        System.out.println("查询到了" + count + "条数据");
+    }
+
+    @Test
+    public void testSelectList2(){
+        QueryWrapper<User> wrapper = new QueryWrapper<>();
+        wrapper.like("email","6044");
+        List<User> users = userMapper.selectList(wrapper);
+        for (User user : users) {
+            System.out.println(user);
+        }
+    }
+
+    @Test
+    public void testSelectPage(){
+        Page<User> page = new Page<>(3,1);
+        IPage<User> iPage = userMapper.selectPage(page, null);
+        System.out.println("数据总条数：" + iPage.getTotal());
+        System.out.println("数据总页数：" + iPage.getPages());
+        System.out.println("当前所在页：" + iPage.getCurrent());
+
+        List<User> users = iPage.getRecords();
+        for (User user : users) {
+            System.out.println(user);
+        }
+    }
+
+    @Test
+    public void testFindById(){
+
+        User user = userMapper.findById(8L);
+        System.out.println(user);
+
+    }
+
+    @Test
+    public void test(){
+        QueryWrapper<User> wrapper = new QueryWrapper<>();
+        wrapper.eq("user_name","linjia");
+        wrapper.eq("password","555520");
+        List<User> users = userMapper.selectList(wrapper);
+        for (User user : users) {
+            System.out.println(user);
+        }
+    }
+
+    @Test
+    public void testAllEq(){
+        QueryWrapper<User> wrapper = new QueryWrapper<>();
+
+        Map<String,Object> params = new HashMap<>();
+        params.put("name","lilinjia");
+        params.put("password","555520");
+        params.put("age","22");
+
+        wrapper.allEq(params);
+        List<User> users = userMapper.selectList(wrapper);
+        for (User user : users) {
+            System.out.println(user);
+        }
+    }
+
+    @Test
+    public void test2(){
+        QueryWrapper<User> wrapper = new QueryWrapper<>();
+        wrapper.eq("name","lilinjia").le("age",22).ne("email","6044@qq.com");
+        List<User> users = userMapper.selectList(wrapper);
+        for (User user : users) {
+            System.out.println(user);
+        }
+    }
+
+    @Test
+    public void test3(){
+        QueryWrapper<User> wrapper = new QueryWrapper<>();
+        wrapper.likeLeft("name","jia");
+        List<User> users = userMapper.selectList(wrapper);
+        for (User user : users) {
+            System.out.println(user);
+        }
+    }
 }

@@ -2,12 +2,13 @@
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
 http://www.springframework.org/schema/beans/spring-beans.xsd
 http://www.springframework.org/schema/context
-http://www.springframework.org/schema/context/spring-context.xsd">
+http://www.springframework.org/schema/context/spring-context.xsd http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd">
 
-    <context:property-placeholder location="classpath:*.properties"/>
+    <context:property-placeholder location="classpath:jdbc.properties"/>
 
     <!-- 定义数据源 -->
     <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource"
@@ -23,13 +24,30 @@ http://www.springframework.org/schema/context/spring-context.xsd">
     <!--这里使用MP提供的sqlSessionFactory，完成了Spring与MP的整合-->
     <bean id="sqlSessionFactory" class="com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean">
         <property name="dataSource" ref="dataSource"/>
+        <property name="mapperLocations" value="classpath*:mybatis/*.xml"/>
+        <property name="typeAliasesPackage" value="com.miykah.mp.pojo"/>
+        <property name="plugins">
+            <list>
+                <bean class="com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor"/>
+            </list>
+        </property>
+
+        <!--设置全局默认主键类型为自增长-->
+        <property name="globalConfig">
+            <bean class="com.baomidou.mybatisplus.core.config.GlobalConfig">
+                <property name="dbConfig">
+                    <bean class="com.baomidou.mybatisplus.core.config.GlobalConfig$DbConfig">
+                        <property name="idType" value="AUTO"/>
+                    </bean>
+                </property>
+            </bean>
+        </property>
+        
     </bean>
 
     <!--扫描mapper接口，使用的依然是Mybatis原生的扫描器-->
     <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
         <property name="basePackage" value="com.miykah.mp.mapper"/>
     </bean>
-
-
 
 </beans>
